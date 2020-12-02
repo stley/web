@@ -1,4 +1,4 @@
-import { statSync, readFileSync } from "fs";
+import { statSync, readFileSync, readdirSync } from "fs";
 import { resolve } from "path";
 
 export const exists = (path: string): boolean => {
@@ -51,6 +51,13 @@ export const readLocaleDocs = async (name: string, locale?: string) => {
   source = await readMd(fullPath);
   if (source !== undefined) {
     return { source, fallback: true, fullPath };
+  }
+
+  if (statSync(fullPath).isDirectory) {
+    readdirSync(fullPath);
+    // generate page etc
+    console.log("dir", name, fullPath);
+    return { source: "generated", fallback: false, fullPath };
   }
 
   throw new Error("Not found");
